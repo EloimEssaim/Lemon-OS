@@ -175,9 +175,9 @@ void TestA()
 		printl("root$");
 		int r = read(fd_stdin, rdbuf, 70);
 		rdbuf[r] = 0;
-		if (strcmp(rdbuf, "process") == 0)
+		if (strcmp(rdbuf, "processManager") == 0)
 		{
-			ProcessManage();
+			processManager();
 		}
 		else if (strcmp(rdbuf, "fileManager") == 0)
 		{
@@ -275,6 +275,7 @@ void TestB()
 			}
 			filename[j] = 0;
 
+			//create file
 			if (strcmp(cmd, "create") == 0)
 			{
 				fd = open(filename, O_CREAT | O_RDWR);
@@ -288,6 +289,7 @@ void TestB()
 				printf("File created: %s (fd %d)\n", filename, fd);
 				close(fd);
 			}
+			//read file
 			else if (strcmp(cmd, "read") == 0)
 			{
 				fd = open(filename, O_RDWR);
@@ -300,8 +302,9 @@ void TestB()
 				n = read(fd, buf, 1024);
 				printf("%s\n", buf);
 				close(fd);
-
 			}
+
+			//write file
 			else if (strcmp(cmd, "write") == 0)
 			{
 				fd = open(filename, O_RDWR);
@@ -316,6 +319,8 @@ void TestB()
 				n = write(fd, rdbuf, m+1);
 				close(fd);
 			}
+
+			//delete file
 			else if (strcmp(cmd, "delete") == 0)
 			{
 				m=unlink(filename);
@@ -376,7 +381,7 @@ void help()
 {
 	printf("=============================================================================\n");
 	printf("Command List     :\n");
-	printf("1. process       : A process manage,show you all process-info here\n");
+	printf("1. processManager: A process manage,show you all process-info here\n");
 	printf("2. fileManager   : Run the file manager\n");
 	printf("3. clear         : Clear the screen\n");
 	printf("4. help          : Show system help information\n");
@@ -398,11 +403,11 @@ void fileHelp()
 	printf("==============================================================================\n");		
 }
 
-void ProcessManage()
+void processManager()
 {
 	int i;
 	printf("=============================================================================\n");
-	printf("      myID      |    name       | spriority    | running?\n");
+	printf("      myID      |    name       |  priority    | running?\n");
 	printf("-----------------------------------------------------------------------------\n");
 	for ( i = 0 ; i < NR_TASKS + NR_PROCS ; ++i )
 	{
