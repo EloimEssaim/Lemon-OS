@@ -63,6 +63,9 @@ PUBLIC void task_fs()
 		case RESUME_PROC:
 			src = fs_msg.PROC_NR;
 			break;
+		case LS:
+			fs_msg.RETVAL = do_ls();
+			break;
 		/* case LSEEK: */
 		/* 	fs_msg.OFFSET = do_lseek(); */
 		/* 	break; */
@@ -89,6 +92,7 @@ PUBLIC void task_fs()
 		msg_name[WRITE]  = "WRITE";
 		msg_name[LSEEK]  = "LSEEK";
 		msg_name[UNLINK] = "UNLINK";
+		msg_name[LS] = "LS";
 		/* msg_name[FORK]   = "FORK"; */
 		/* msg_name[EXIT]   = "EXIT"; */
 		/* msg_name[STAT]   = "STAT"; */
@@ -99,6 +103,7 @@ PUBLIC void task_fs()
 			//dump_fd_graph("%s just finished.", msg_name[msgtype]);
 			//panic("");
 		case OPEN:
+		case LS:
 		case READ:
 		case WRITE:
 		/* case FORK: */

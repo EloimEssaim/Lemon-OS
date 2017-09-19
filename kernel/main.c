@@ -232,13 +232,14 @@ void TestB()
 	char cmd[8];
 	char filename[120];
 	char buf[1024];
+	char currentDir[512]="/";
 	int m,n;
 	printf("    ===========================================================\n\n");
 	printf("                          File Manager                         \n");
 	printf("                           of LemonOS                        \n\n");
 	printf("    ===========================================================\n");
 	while (1) {
-		printf("$ ");
+		printf("%s$ ",currentDir);
 		int r = read(fd_stdin, rdbuf, 70);
 		rdbuf[r] = 0;
 		
@@ -294,6 +295,10 @@ void TestB()
 				close(fd);
 			}
 
+			else if (strcmp(cmd, "ls") == 0)
+			{
+				ls(currentDir);
+			}
 			//write file
 			else if (strcmp(cmd, "write") == 0)
 			{
@@ -383,10 +388,10 @@ void fileHelp()
 	printf("*****************************************************************\n");
 	printf("Command List\n");
 	printf("1. create [filename]              : Create a new file \n");
-	printf("2. read [filename]                : Read the file\n");
-	printf("3. write [filename]               : Write at the end of the file\n");
+	printf("2. read [filename]                : Read a file according to file name\n");
+	printf("3. write [filename]               : Write at the end of a file\n");
 	printf("4. delete [filename]              : Delete the file\n");
-	printf("5. help                           : Display the help message\n");
+	printf("5. help                           : Show file system help message\n");
 	printf("*****************************************************************\n");		
 }
 
