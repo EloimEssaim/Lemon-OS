@@ -102,8 +102,6 @@ PUBLIC int kernel_main()
 		p_proc->regs.esp = (u32)p_task_stack;
 		p_proc->regs.eflags = eflags;
 
-		/* p_proc->nr_tty		= 0; */
-
 		p_proc->p_flags = 0;
 		p_proc->p_msg = 0;
 		p_proc->p_recvfrom = NO_TASK;
@@ -122,11 +120,6 @@ PUBLIC int kernel_main()
 		p_task++;
 		selector_ldt += 1 << 3;
 	}
-
-        /* proc_table[NR_TASKS + 0].nr_tty = 0; */
-        /* proc_table[NR_TASKS + 1].nr_tty = 1; */
-        /* proc_table[NR_TASKS + 2].nr_tty = 1; */
-
 	k_reenter = 0;
 	ticks = 0;
 
@@ -154,8 +147,6 @@ PUBLIC int get_ticks()
 void TestA()
 {
 	int fd;
-	int i, n;
-
 	char tty_name[] = "/dev_tty0";
 	char rdbuf[128];
 
@@ -169,7 +160,6 @@ void TestA()
 	welcome();
 	animation();
 	printl("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-
 
 	while (1) {
 		printl("root$");
@@ -201,18 +191,19 @@ void TestA()
 			int year,i,r,s,t;
 			char buf[128];
 			while (1){
-				printf("\nEnter 1 to start or other to end");
+				printf("\nWelcome to system calendar!");
+				printf("\nPress 1 to start or other key to end:");
 				r=read(0,buf,128);
 				i=getNum(buf);
 				if (i == 1) {
-					printf("please enter a year:");
+					printf("Please enter a year:");
 					s=read(0,buf,128);
 				        year=getNum(buf);                     
 					printf("\n");
 					while (year < 1902)
 					{
 					printf("Please enter a year greater than 1901\n");
-						printf("please enter a year:");
+						printf("Please enter a year:");
 						t=read(0,buf,128);
 				                year=getNum(buf);
 						printf("\n");
@@ -224,8 +215,7 @@ void TestA()
 			}
 		}
 		else
-			printf("Command not found, please check!\n");
-	
+			printf("No such command!\n");
 	}
 }
 
@@ -337,7 +327,7 @@ void TestB()
 			}
 			else 
 			{
-				printf("Command not found, Please check!\n");
+				printf("No such command!\n");
 				continue;
 			}	
 		}	
@@ -348,7 +338,7 @@ void TestB()
 
 void TestC()
 {
-	spin("TestC");
+	for(;;);
 }
 
 
@@ -356,15 +346,12 @@ PUBLIC void panic(const char *fmt, ...)
 {
 	int i;
 	char buf[256];
-
-	/* 4 is the size of fmt in the stack */
 	va_list arg = (va_list)((char*)&fmt + 4);
 
 	i = vsprintf(buf, fmt, arg);
 
 	printl("%c !!panic!! %s", MAG_CH_PANIC, buf);
 
-	/* should never arrive here */
 	__asm__ __volatile__("ud2");
 }
 
@@ -379,42 +366,42 @@ void clear()
 //system help of tty0
 void help()
 {
-	printf("=============================================================================\n");
+	printf("\n*****************************************************************\n");
 	printf("Command List     :\n");
-	printf("1. processManager: A process manage,show you all process-info here\n");
-	printf("2. fileManager   : Run the file manager\n");
+	printf("1. processManager: Show all system process\n");
+	printf("2. fileManager   : Run file manager\n");
 	printf("3. clear         : Clear the screen\n");
 	printf("4. help          : Show system help information\n");
 	printf("5. calendar      : Look up the calendar of a specified year and month\n");
 	printf("6. joseph        : Play the joseph game\n");
-	printf("==============================================================================\n");		
+	printf("*****************************************************************\n");		
 }
 
 //system help of tty1
 void fileHelp()
 {
-	printf("=============================================================================\n");
+	printf("*****************************************************************\n");
 	printf("Command List\n");
 	printf("1. create [filename]              : Create a new file \n");
 	printf("2. read [filename]                : Read the file\n");
 	printf("3. write [filename]               : Write at the end of the file\n");
 	printf("4. delete [filename]              : Delete the file\n");
 	printf("5. help                           : Display the help message\n");
-	printf("==============================================================================\n");		
+	printf("*****************************************************************\n");		
 }
 
 void processManager()
 {
 	int i;
-	printf("=============================================================================\n");
-	printf("      myID      |    name       |  priority    | running?\n");
-	printf("-----------------------------------------------------------------------------\n");
+	printf("*****************************************************************\n");
+	printf("      ID      |    name       |  priority    | running\n");
+	printf("--------------------------------------------------------------------\n");
 	for ( i = 0 ; i < NR_TASKS + NR_PROCS ; ++i )
 	{
 //		if ( proc_table[i].priority == 0) continue;
 		printf("        %d           %s            %d                yes\n", proc_table[i].pid, proc_table[i].name, proc_table[i].priority);
 	}
-	printf("=============================================================================\n");
+	printf("****************************************************************\n");
 }
 
 int day_count(int month)
@@ -690,13 +677,15 @@ int getNum(char*buf){
 
 void joseph()
 {
+	printf("\nWelcome to joseph game!");
+	printf("\n\nGame rule:\nPeople are standing in a circle waiting to be executed. Counting begins at a specified point in the circle and proceeds around the circle in a specified direction. After a specified number of people are skipped, the next person is executed. The procedure is repeated with the remaining people, starting with the next person, going in the same direction and skipping the same number of people, until only one person remains, and is freed.\n\n");
 	int flag[100] = { 0 };
 	int n = 0, m = 0,r,t;
 	char buf[128];
-	printf("Sum:");
+	printf("Please enter the sum of people:");
 	r=read(0,buf,128);
 	n=getNum(buf);
-	printf("deathNumber:");
+	printf("Please enter the death number:");
 	t=read(0,buf,128);
 	m=getNum(buf);
 	int i = 0;
@@ -710,8 +699,7 @@ void joseph()
 			if (1 == flag[i]) {
 				num++;
 				if (num == m) {
-					 printf("outNum:");
-					 printf("%d\n", i);
+					 printf("The death's id is %d\n",i);
 					 count++;
 					 flag[i] = 0;
 					 num = 0;
@@ -724,7 +712,7 @@ void joseph()
 	}
 	for (i = 1; i <= n; i++) {       
 		if (1 == flag[i]) {
-			printf("The last one is : %d\n", i);		
+			printf("The survivor's id is : %d\n\n", i);		
 		}	
 	}
 }
